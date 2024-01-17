@@ -15,10 +15,11 @@ import { SimpleLineIcons, Ionicons, AntDesign } from "@expo/vector-icons";
 import axios from "axios";
 import image from "../assets/ImageIcon.png";
 import { useNavigation } from "@react-navigation/native";
+import { useFavoriteContext } from "../context/FavouriteContext";
 const HomeScreen = () => {
   const [product, setProduct] = useState([]);
   const navigation = useNavigation();
-  const [favoriteProducts, setFavoriteProducts] = useState([]);
+  const { favoriteProducts, addFavorite, removeFavorite } = useFavoriteContext();
   const fecthProduct = async () => {
     try {
       const response = await axios.get(`https://dummyjson.com/products`);
@@ -35,16 +36,12 @@ const HomeScreen = () => {
   }, []);
 
   const [heart, setHeart] = useState(false);
-  const handleFavourite = (productId) => {
-    const isFavorite = favoriteProducts.some((product) => product.id === productId);
+  const handleFavourite = (selectedProduct) => {
+    const isFavorite = favoriteProducts.some((product) => product.id === selectedProduct.id);
     if (isFavorite) {
-      const updatedFavorites = favoriteProducts.filter((product) => product.id !== productId);
-      setFavoriteProducts(updatedFavorites);
+      removeFavorite(selectedProduct.id);
     } else {
-      const selectedProduct = product.find((prod) => prod.id === productId);
-      if (selectedProduct) {
-        setFavoriteProducts([...favoriteProducts, selectedProduct]);
-      }
+      addFavorite(selectedProduct);
     }
     setHeart(!heart);
   };
@@ -85,7 +82,7 @@ const HomeScreen = () => {
           <Text style={styles.name}>Hey, Rahul</Text>
           <View style={styles.cart}>
             <SimpleLineIcons name="handbag" size={24} color="#fff" />
-            <Text style={styles.cartNumber}>{ favoriteProducts?.length}</Text>
+            <Text style={styles.cartNumber}>3</Text>
           </View>
         </View>
         <View style={styles.inputContainer}>
@@ -212,18 +209,19 @@ const HomeScreen = () => {
               />
 
               <TouchableOpacity
-                onPress={() => handleFavourite(elem?.id)}
+                onPress={() => handleFavourite(elem)}
                 style={{
                   position: "absolute",
                   left: 15,
                   top: 15,
                 }}
               >
-                {heart ? (
-                  <AntDesign name="heart" size={24} color="red" />
-                ) : (
-                  <AntDesign name="hearto" size={24} color="black" />
-                )}
+                
+                <AntDesign
+                  name={favoriteProducts.some((product) => product.id === elem.id) ? "heart" : "hearto"}
+                  size={24}
+                  color={favoriteProducts.some((product) => product.id === elem.id) ? "red" : "black"}
+                />
               </TouchableOpacity>
               </View>
 

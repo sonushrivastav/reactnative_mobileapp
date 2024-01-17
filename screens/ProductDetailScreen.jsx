@@ -10,8 +10,11 @@ import {
 } from "react-native";
 import { SimpleLineIcons, Ionicons, AntDesign } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { useFavoriteContext } from "../context/FavouriteContext";
 
 const ProductDetailScreen = ({ route }) => {
+  const { favoriteProducts, addFavorite, removeFavorite } = useFavoriteContext();
+
   const { product } = route.params;
   const navigation = useNavigation();
 

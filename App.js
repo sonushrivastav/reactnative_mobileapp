@@ -13,6 +13,7 @@ import MoreScreen from "./screens/MoreScreen";
 import { createStackNavigator } from "@react-navigation/stack";
 import ProductDetailScreen from "./screens/ProductDetailScreen";
 import CartScreen from "./screens/CartScreen";
+import { FavoriteProvider, useFavoriteContext } from "./context/FavouriteContext";
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
@@ -126,7 +127,9 @@ const Hometabs = () => (
 );
 
 export default function App() {
+
   return (
+    <FavoriteProvider>
     <NavigationContainer>
       <Stack.Navigator initialRouteName="HomeTabs">
         <Stack.Screen
@@ -142,7 +145,7 @@ export default function App() {
             headerRight: () => (
               <TouchableOpacity style={{position:"relative", paddingHorizontal:5}}>
                 <SimpleLineIcons name="handbag" size={24} color="black" />
-                <Text style={styles.cartNumber}>3</Text>
+                <Text style={styles.cartNumber}>2</Text>
               </TouchableOpacity>
             ),
           })}
@@ -159,7 +162,8 @@ export default function App() {
           })}
         />
       </Stack.Navigator>
-    </NavigationContainer>
+      </NavigationContainer>
+      </FavoriteProvider>
   );
 }
 
