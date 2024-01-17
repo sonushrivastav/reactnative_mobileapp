@@ -1,7 +1,8 @@
 import React from 'react'
 import {View,StyleSheet,Text} from "react-native"
 
-const CartScreen = () => {
+const CartScreen = ({ route }) => {
+  const { product } = route.params;
   return (
     <View>
       <Text>Cart</Text>

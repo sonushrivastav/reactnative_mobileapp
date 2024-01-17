@@ -14,9 +14,11 @@ import {
 import { SimpleLineIcons, Ionicons, AntDesign } from "@expo/vector-icons";
 import axios from "axios";
 import image from "../assets/ImageIcon.png";
+import { useNavigation } from "@react-navigation/native";
 const HomeScreen = () => {
   const [product, setProduct] = useState([]);
-
+  const navigation = useNavigation();
+  const [favoriteProducts, setFavoriteProducts] = useState([]);
   const fecthProduct = async () => {
     try {
       const response = await axios.get(`https://dummyjson.com/products`);
@@ -32,11 +34,20 @@ const HomeScreen = () => {
     fecthProduct();
   }, []);
 
-  const [heart,setHeart] = useState(false)
-  const handleFavourite = () => {
-    console.log('handleFavourite called');
-    setHeart(!heart)
-  }
+  const [heart, setHeart] = useState(false);
+  const handleFavourite = (productId) => {
+    const isFavorite = favoriteProducts.some((product) => product.id === productId);
+    if (isFavorite) {
+      const updatedFavorites = favoriteProducts.filter((product) => product.id !== productId);
+      setFavoriteProducts(updatedFavorites);
+    } else {
+      const selectedProduct = product.find((prod) => prod.id === productId);
+      if (selectedProduct) {
+        setFavoriteProducts([...favoriteProducts, selectedProduct]);
+      }
+    }
+    setHeart(!heart);
+  };
 
   const OfferArray = [
     {
@@ -64,6 +75,9 @@ const HomeScreen = () => {
       order: "On first 02 order",
     },
   ];
+
+
+ 
   return (
     <View style={styles.container}>
       <View style={styles.mainContainer}>
@@ -71,7 +85,7 @@ const HomeScreen = () => {
           <Text style={styles.name}>Hey, Rahul</Text>
           <View style={styles.cart}>
             <SimpleLineIcons name="handbag" size={24} color="#fff" />
-            <Text style={styles.cartNumber}>3</Text>
+            <Text style={styles.cartNumber}>{ favoriteProducts?.length}</Text>
           </View>
         </View>
         <View style={styles.inputContainer}>
@@ -182,30 +196,81 @@ const HomeScreen = () => {
       <ScrollView contentContainerStyle={styles.productContainer}>
         {product?.map((elem, index) => {
           return (
-            <View style={styles.itemList} key={index}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("ProductDetails", { product: elem })}
+              style={styles.itemList} key={index}>
+              <View style={{position:"relative"}}>
               <Image
                 source={{ uri: elem?.thumbnail }}
                 style={{
-                  height: "100%",
-                  opacity: 0.5,
+                  height: "70%",
+                  opacity: 0.6,
                   width: "100%",
                   borderRadius: 11,
-                  objectFit: "cover",
+                  objectFit: "contain",
                 }}
               />
-   
-              <TouchableOpacity onPress={handleFavourite} style={{
-                position: "absolute",
-                left:15,
-                top:15,
-              }}>
-                {
-                  heart ? 
-              (<AntDesign name="heart" size={24} color="red" />) :
-              (<AntDesign  name="hearto" size={24} color="black" /> )
-                }
+
+              <TouchableOpacity
+                onPress={() => handleFavourite(elem?.id)}
+                style={{
+                  position: "absolute",
+                  left: 15,
+                  top: 15,
+                }}
+              >
+                {heart ? (
+                  <AntDesign name="heart" size={24} color="red" />
+                ) : (
+                  <AntDesign name="hearto" size={24} color="black" />
+                )}
               </TouchableOpacity>
-            </View>
+              </View>
+
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+
+                }}
+              >
+                <Text
+                  style={{
+                    color: "#1E222B",
+                    position: "absolute",
+                    top: -15,
+                    left: 16,
+                    fontSize: 20,
+                    fontWeight: "600",
+                  }}
+                >
+                  ${elem?.price}
+                </Text>
+                 
+                <TouchableOpacity  style={{ position: "absolute", right: 8 , top:-15}}>
+                <Ionicons
+                  name="add-circle"
+                  size={34}
+                  color="#2A4BA0"
+                />
+                </TouchableOpacity>
+              </View>
+
+              <Text
+                style={{
+                  color: "#616A7D",
+                  position: "absolute",
+                  fontSize: 14,
+                  top: "80%",
+                  left:18,
+                  fontWeight: "400",
+                  width: 130,
+                }}
+                numberOfLines={1} ellipsizeMode="tail"
+              >
+                {elem?.title}
+              </Text>
+            </TouchableOpacity>
           );
         })}
       </ScrollView>
@@ -299,6 +364,6 @@ const styles = StyleSheet.create({
     height: 210,
     borderRadius: 12,
     backgroundColor: "#F8F9FB",
-    position:"relative"
+    // position: "relative",
   },
 });
