@@ -127,7 +127,6 @@ const Hometabs = () => (
 );
 
 export default function App() {
-
   return (
     <FavoriteProvider>
     <NavigationContainer>
@@ -144,7 +143,7 @@ export default function App() {
             title: "", 
             headerRight: () => (
               <TouchableOpacity
-              // onPress={() => navigation.navigate("CartDetails", { product: cart})}
+              onPress={() => navigation.navigate("CartDetails",)}
               
                 style={{ position: "relative", paddingHorizontal: 5 }}>
                 <SimpleLineIcons name="handbag" size={24} color="black" />

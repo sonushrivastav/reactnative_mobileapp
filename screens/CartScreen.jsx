@@ -4,8 +4,8 @@ import { useFavoriteContext } from "../context/FavouriteContext";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
 import nodataimg from "../assets/noproducts.jpg"
-const CartScreen = ({ route }) => {
-  const { product } = route.params;
+const CartScreen = () => {
+  
   const { cart, removeCart } = useFavoriteContext();
   const [quantities, setQuantities] = useState({});
 
