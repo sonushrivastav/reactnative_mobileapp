@@ -19,7 +19,7 @@ import { useFavoriteContext } from "../context/FavouriteContext";
 const HomeScreen = () => {
   const [product, setProduct] = useState([]);
   const navigation = useNavigation();
-  const { favoriteProducts, addFavorite, removeFavorite } = useFavoriteContext();
+  const { favoriteProducts, addFavorite,cart, removeFavorite ,removeCart,addToCart} = useFavoriteContext();
   const fecthProduct = async () => {
     try {
       const response = await axios.get(`https://dummyjson.com/products`);
@@ -73,17 +73,26 @@ const HomeScreen = () => {
     },
   ];
 
-
+  const handleAddProduct = (selectProduct) => {
+    const cartProduct = favoriteProducts.some((prod) => prod?.id === selectProduct?.id)
+    if (cartProduct) {
+      removeCart(selectProduct?.id)
+    } else {
+      addToCart(selectProduct)
+    }
+  }
  
   return (
     <View style={styles.container}>
       <View style={styles.mainContainer}>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <Text style={styles.name}>Hey, Rahul</Text>
-          <View style={styles.cart}>
+          <TouchableOpacity
+              onPress={() => navigation.navigate("CartDetails", { product:product })}
+            style={styles.cart}>
             <SimpleLineIcons name="handbag" size={24} color="#fff" />
-            <Text style={styles.cartNumber}>3</Text>
-          </View>
+            <Text style={styles.cartNumber}>{ cart?.length}</Text>
+          </TouchableOpacity>
         </View>
         <View style={styles.inputContainer}>
           <TextInput
@@ -137,39 +146,39 @@ const HomeScreen = () => {
       <View style={styles.horizontalWrapper}>
         <FlatList
           horizontal={true}
-          data={OfferArray}
+          data={product}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item, index }) => (
             <View style={styles.itemContainer} key={index}>
               <View
                 style={{
                   alignItems: "center",
-                  justifyContent: "space-between",
+                  justifyContent: "start",
                   flexDirection: "row",
-                  gap: 10,
+                  gap: 30,
                   width: "100%",
                   padding: 20,
                 }}
               >
                 <Image
-                  style={{ height: 86, width: 86, objectFit: "contain" }}
-                  source={image}
+                  style={{ height: 86, width: 86, borderRadius:20,objectFit: "contain" }}
+                  source={{uri:item?.thumbnail}}
                 />
                 <View>
                   <Text
-                    style={{ color: "#fff", fontSize: 20, fontWeight: 300 }}
+                    style={{ color: "#000", fontSize: 22, fontWeight: 300 }}
                   >
                     Get
                   </Text>
                   <Text
-                    style={{ color: "#fff", fontSize: 25, fontWeight: 900 }}
+                    style={{ color: "#000", fontSize: 25, fontWeight: 900 }}
                   >
-                    {item?.offer}
+                    {item?.discountPercentage}% OFF
                   </Text>
                   <Text
-                    style={{ color: "#fff", fontSize: 16, fontWeight: 300 }}
+                    style={{ color: "#000", fontSize: 16, fontWeight: 300 }}
                   >
-                    {item?.order}
+                    On this Price ${item?.price}
                   </Text>
                 </View>
               </View>
@@ -245,7 +254,7 @@ const HomeScreen = () => {
                   ${elem?.price}
                 </Text>
                  
-                <TouchableOpacity  style={{ position: "absolute", right: 8 , top:-15}}>
+                <TouchableOpacity onPress={()=>handleAddProduct(elem)} style={{ position: "absolute", right: 8 , top:-15}}>
                 <Ionicons
                   name="add-circle"
                   size={34}
@@ -341,9 +350,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   itemContainer: {
-    backgroundColor: "#F9B023",
-    borderRadius: 16,
-    width: 269,
+    // backgroundColor: "#F9B023",
+    borderWidth:0.5,
+    borderRadius: 20,
+    width: 299,
     marginRight: 20,
     justifyContent: "center",
     alignItems: "center",

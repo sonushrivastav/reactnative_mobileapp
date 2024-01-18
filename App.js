@@ -143,9 +143,12 @@ export default function App() {
           options={({ navigation }) => ({
             title: "", 
             headerRight: () => (
-              <TouchableOpacity style={{position:"relative", paddingHorizontal:5}}>
+              <TouchableOpacity
+              // onPress={() => navigation.navigate("CartDetails", { product: cart})}
+              
+                style={{ position: "relative", paddingHorizontal: 5 }}>
                 <SimpleLineIcons name="handbag" size={24} color="black" />
-                <Text style={styles.cartNumber}>2</Text>
+                <CartLength/>
               </TouchableOpacity>
             ),
           })}
@@ -156,8 +159,9 @@ export default function App() {
           options={({ navigation }) => ({
             title: "", 
             headerRight: () => (
-              
-                <Text style={{marginRight:"50%" , color:"#1E222B", fontSize:20,width:190}}>Shopping Cart (5)</Text>
+              <View>
+                <ShoppingCart/>
+              </View>
             ),
           })}
         />
@@ -167,6 +171,21 @@ export default function App() {
   );
 }
 
+const CartLength = () => {
+  const { cart } = useFavoriteContext();
+  console.log(cart);
+
+  return (
+    <Text style={styles.cartNumber}>{cart?.length}</Text>
+  );
+};
+
+const ShoppingCart = () => {
+  const { cart } = useFavoriteContext();
+  return (
+    <Text style={{marginRight:"50%" , color:"#1E222B", fontSize:20,width:190}}>Shopping Cart ({cart?.length})</Text>
+  )
+}
 const styles = StyleSheet.create({
   cartNumber: {
     backgroundColor: "#F9B023",

@@ -13,7 +13,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useFavoriteContext } from "../context/FavouriteContext";
 
 const ProductDetailScreen = ({ route }) => {
-  const { favoriteProducts, addFavorite, removeFavorite } = useFavoriteContext();
+  const { favoriteProducts, addFavorite, removeFavorite ,cart,addToCart,removeCart} = useFavoriteContext();
 
   const { product } = route.params;
   const navigation = useNavigation();
@@ -89,12 +89,24 @@ const ProductDetailScreen = ({ route }) => {
   };
 
   const [heart, setHeart] = useState(false);
-  const handleFavourite = (index) => {
-    // product?.filter((prdct) => {
-    //   prdct?.id;
-    // });
+  const handleFavourite = (selectedProduct) => {
+    const isFavorite = favoriteProducts.some((product) => product.id === selectedProduct.id);
+    if (isFavorite) {
+      removeFavorite(selectedProduct.id);
+    } else {
+      addFavorite(selectedProduct);
+    }
     setHeart(!heart);
   };
+
+  const handleAddProduct = (item) => {
+    const cartProduct = favoriteProducts.some((prod) => prod?.id === item?.id)
+    if (cartProduct) {
+      removeCart(selectProduct?.id)
+    } else {addToCart(item)
+    }
+    
+  }
 
   return (
     <View style={styles.container}>
@@ -120,18 +132,18 @@ const ProductDetailScreen = ({ route }) => {
           onSnapToItem={(index) => setCurrentIndex(index)}
         />
         <TouchableOpacity
-          onPress={() => handleFavourite(product?.id)}
+          onPress={() => handleFavourite(product)}
           style={{
             position: "absolute",
             right: "10%",
             top: 30,
           }}
         >
-          {heart ? (
-            <AntDesign name="heart" size={24} color="red" />
-          ) : (
-            <AntDesign name="hearto" size={24} color="black" />
-          )}
+          <AntDesign
+                  name={favoriteProducts.some((prod) => prod.id === product?.id) ? "heart" : "hearto"}
+                  size={24}
+                  color={favoriteProducts.some((prod) => prod.id === product?.id) ? "red" : "black"}
+                />
         </TouchableOpacity>
         <View style={styles.buttonContainer}>
           {product?.images?.map((_, index) => (
@@ -160,8 +172,7 @@ const ProductDetailScreen = ({ route }) => {
 
           <View style={{flexDirection:"row",gap:20, marginTop:30}}>
               <TouchableOpacity
-              onPress={() => navigation.navigate("CartDetails", { product:product })}
-                  
+                  onPress={()=>handleAddProduct(product)}
                   style={{
                   width: 180,
                   height: 56,

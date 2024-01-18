@@ -9,7 +9,7 @@ import {
 import { useFavoriteContext } from "../context/FavouriteContext";
 import { Image } from "react-native";
 import { SimpleLineIcons, Ionicons, AntDesign } from "@expo/vector-icons";
-
+import nodata from "../assets/noproducts.jpg"
 const FavouriteScreen = () => {
   const { favoriteProducts, addFavorite, removeFavorite } =
     useFavoriteContext();
@@ -111,9 +111,10 @@ const FavouriteScreen = () => {
             </View>
           );
           }) : (
-            <>
-              <Text >No Data</Text>
-            </>
+            <View style={styles.nodata}>
+            <Text style={{fontSize:50}}>Oops!</Text>
+                    <Image source={ nodata} style={{height:250, width:350, objectFit:"contain"}} />
+            </View>
         )
         }
       </ScrollView>
@@ -128,6 +129,13 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 70,
     paddingHorizontal: 20,
+  },
+  nodata: {
+    flex:1,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    height:800
   },
   productContainer: {
     flexDirection: "row",
